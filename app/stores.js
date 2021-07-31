@@ -4,6 +4,18 @@ export class NestedStore {
   constructor(store, accessor) {
     this.store = store
     this.accessor = accessor
+
+    return new Proxy(this, {
+      get: this.proxyHandler
+    })
+  }
+
+  proxyHandler(target, prop, receiver) {
+    if(prop in target) {
+      return Reflect.get(...arguments)
+    }
+
+    return target.access(prop)
   }
 
   subscribe(subscription) {
